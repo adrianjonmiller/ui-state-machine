@@ -101,3 +101,23 @@ test('onStateChange', done => {
   uiStateMachine.onStateChange(() => done())
   uiStateMachine.on('SUCCESS');
 });
+
+
+test('prevState', () => {
+  let states = {
+    'start': {
+      on: {
+        'SUCCESS': {
+          next: 'nextState'
+        }
+      },
+    },
+    'nextState': {
+      payload: 'success'
+    }
+  };
+  let uiStateMachine = new UiStateMachine(states, 'start');
+  uiStateMachine.on('SUCCESS');
+  uiStateMachine.goToPrevState();
+  expect(uiStateMachine.getState()).toBe('start');
+});

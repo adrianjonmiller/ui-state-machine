@@ -16,7 +16,8 @@ export default class {
           onStateChange: this.onStateChange.bind(this),
           getState: this.getState.bind(this),
           getPrevState: this.getPrevState.bind(this),
-          getPayload: this.getPayload.bind(this)
+          getPayload: this.getPayload.bind(this),
+          goToPrevState: this.goToPrevState.bind(this),
       }
   }
 
@@ -36,8 +37,14 @@ export default class {
       } catch (err) {
           console.error(err)
       }
-      
-      
+  }
+
+  goToPrevState () {
+    let prevState = this.prevStates.length ? this.prevStates.pop() : null;
+
+    if (prevState) {
+        this.updateState(prevState)
+    }
   }
 
   onStateChange (cb) {
@@ -56,22 +63,22 @@ export default class {
       return this.prevStates.length > 0 ? this.prevStates[this.prevStates.length - 1] : null;
   }
 
-  updateState (next) {
-      let payload = this.states[next].payload;
+  updateState (state) {
+      let payload = this.states[state].payload;
 
       if (this.currentState) {
           let currentStateOb = this.states[this.currentState];
 
           if ('leave' in currentStateOb) {
               if (typeof currentStateOb.leave === 'function') {
-                  currentStateOb.leave(next, this.currentState)
+                  currentStateOb.leave(state, this.currentState)
               }
           }
 
           this.prevStates.push(this.currentState);
       }
 
-      this.currentState = next;
+      this.currentState = state;
 
       if (payload) {
           this.payload = payload
