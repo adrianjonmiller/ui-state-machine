@@ -109,16 +109,16 @@ const states = {
 			'ERROR': 'error'
 		},
 		enter: ({emit}) => {
-      errorNode.innerHTML = 'Loading...'
+			errorNode.innerHTML = 'Loading...'
 			setTimeout(() => {
-        emit('SUCCESS')
-      }, 2000);
+        			emit('SUCCESS')
+      			}, 2000);
 		}
 	},
 	complete: {
 		enter: () => {
-      errorNode.innerHTML = 'Success';
-      input.value = '';
+      		errorNode.innerHTML = 'Success';
+      		input.value = '';
 			form.removeEventListener('submit', submitHandler)
 		}
 	}
