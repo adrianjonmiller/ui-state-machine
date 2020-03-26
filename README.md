@@ -66,7 +66,7 @@ uxStateMachine.emit('EVENT');
 
 ### Code examples
 
-In this example, upon entering the error state, it sets the errorNode content to an error message. On leaving the error state the errorNode content is cleared.
+In this example, upon entering the error state, it sets the errorNode content to an error message. On leaving the error state the errorNode content is cleared. [Working Codepen Example](https://codepen.io/adrianjonmiller/details/YzXRBKo)
 
 ```html
 <form id="form">
@@ -109,21 +109,16 @@ const states = {
 			'ERROR': 'error'
 		},
 		enter: ({emit}) => {
-			var request = new XMLHttpRequest();
-			request.open('POST', '/my/url', true);
-			request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-			xhr.onreadystatechange = function() {
-					if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-						emit('SUCCESS')
-					} else {
-						emit('ERROR')
-					}
-			}
-			request.send(input.value);
+      errorNode.innerHTML = 'Loading...'
+			setTimeout(() => {
+        emit('SUCCESS')
+      }, 2000);
 		}
 	},
 	complete: {
 		enter: () => {
+      errorNode.innerHTML = 'Success';
+      input.value = '';
 			form.removeEventListener('submit', submitHandler)
 		}
 	}
@@ -131,7 +126,7 @@ const states = {
 
 const uxStateMachine = new UxStateMachine(states, 'start');
 
-function submitHandler () {
+function submitHandler (e) {
 	e.preventDefault();
 	let email =	input.value.match(/[^@]+@[^\.]+\..+/g);
 	if (email) {
@@ -140,5 +135,4 @@ function submitHandler () {
 		uxStateMachine.emit('ERROR')
 	}
 }
-
 ```

@@ -15,9 +15,7 @@ test('getNextState', () => {
   let states = {
     'start': {
       on: {
-        'SUCCESS': {
-          next: 'nextState'
-        }
+        'SUCCESS': 'nextState'
       }
     },
     'nextState': {}
@@ -31,9 +29,7 @@ test('leavingState', done => {
   let states = {
     'start': {
       on: {
-        'SUCCESS': {
-          next: 'nextState'
-        }
+        'SUCCESS': 'nextState'
       },
       leave: () => {
         done()
@@ -50,9 +46,7 @@ test('enteringState', done => {
   let states = {
     'start': {
       on: {
-        'SUCCESS': {
-          next: 'nextState'
-        }
+        'SUCCESS': 'nextState'
       },
     },
     'nextState': {
@@ -70,9 +64,7 @@ test('getPayload', () => {
   let states = {
     'start': {
       on: {
-        'SUCCESS': {
-          next: 'nextState'
-        }
+        'SUCCESS': 'nextState'
       },
     },
     'nextState': {
@@ -88,9 +80,7 @@ test('onStateChange', done => {
   let states = {
     'start': {
       on: {
-        'SUCCESS': {
-          next: 'nextState'
-        }
+        'SUCCESS': 'nextState'
       },
     },
     'nextState': {
@@ -107,9 +97,7 @@ test('prevState', () => {
   let states = {
     'start': {
       on: {
-        'SUCCESS': {
-          next: 'nextState'
-        }
+        'SUCCESS': 'nextState'
       },
     },
     'nextState': {

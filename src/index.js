@@ -26,7 +26,7 @@ export default class UxStateMachine {
   emit (event) {
       try {
           
-          let {next} = this.states[this.currentState].on[event.toUpperCase()];
+          let next = this.states[this.currentState].on[event.toUpperCase()];
           
           if (next) {
               if (next !== this.currentState) {
