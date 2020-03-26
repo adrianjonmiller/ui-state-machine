@@ -128,7 +128,7 @@ const uxStateMachine = new UxStateMachine(states, 'start');
 
 function submitHandler (e) {
 	e.preventDefault();
-	let email =	input.value.match(/[^@]+@[^\.]+\..+/g);
+	let email = input.value.match(/[^@]+@[^\.]+\..+/g);
 	if (email) {
 		uxStateMachine.emit('SUBMIT')
 	} else {
