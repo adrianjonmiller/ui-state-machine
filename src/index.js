@@ -1,4 +1,4 @@
-export default class {
+export default class UxStateMachine {
   constructor (states, currentState = null) {
       this.states = states;
       this.currentState = currentState;
@@ -11,17 +11,19 @@ export default class {
           this.updateState(currentState)
       }
 
-      return {
-          on: this.on.bind(this),
-          onStateChange: this.onStateChange.bind(this),
-          getState: this.getState.bind(this),
-          getPrevState: this.getPrevState.bind(this),
-          getPayload: this.getPayload.bind(this),
-          goToPrevState: this.goToPrevState.bind(this),
-      }
+      this.methods = {
+        on: this.on.bind(this),
+        onStateChange: this.onStateChange.bind(this),
+        getState: this.getState.bind(this),
+        getPrevState: this.getPrevState.bind(this),
+        getPayload: this.getPayload.bind(this),
+        goToPrevState: this.goToPrevState.bind(this),
+    }
+
+      return this.methods;
   }
 
-  on (event) {
+  emit (event) {
       try {
           
           let {next} = this.states[this.currentState].on[event.toUpperCase()];
@@ -71,7 +73,7 @@ export default class {
 
           if ('leave' in currentStateOb) {
               if (typeof currentStateOb.leave === 'function') {
-                  currentStateOb.leave(state, this.currentState)
+                  currentStateOb.leave.call({}, this.methods)
               }
           }
 
@@ -88,7 +90,7 @@ export default class {
 
       if ('enter' in newStateOb) {
           if (typeof newStateOb.enter === 'function') {
-              newStateOb.enter(this.currentState, this.prevStates)
+              newStateOb.enter.call({}, this.methods)
           }
       }
 
@@ -96,4 +98,8 @@ export default class {
           this.cb(this.currentState, this.prevStates, payload);
       }
   }
+}
+
+if (window && !('UxStateMachine' in window) {
+    window.UxStateMachine = UxStateMachine;
 }
