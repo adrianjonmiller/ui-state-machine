@@ -23,7 +23,7 @@ test('getNextState', () => {
     'nextState': {}
   };
   let uiStateMachine = new UiStateMachine(states, 'start')
-  uiStateMachine.on('SUCCESS');
+  uiStateMachine.emit('SUCCESS');
   expect(uiStateMachine.getState()).toBe('nextState');
 });
 
@@ -42,7 +42,7 @@ test('leavingState', done => {
     'nextState': {}
   };
   let uiStateMachine = new UiStateMachine(states, 'start')
-  uiStateMachine.on('SUCCESS');
+  uiStateMachine.emit('SUCCESS');
 });
 
 
@@ -62,7 +62,7 @@ test('enteringState', done => {
     }
   };
   let uiStateMachine = new UiStateMachine(states, 'start')
-  uiStateMachine.on('SUCCESS');
+  uiStateMachine.emit('SUCCESS');
 });
 
 
@@ -80,7 +80,7 @@ test('getPayload', () => {
     }
   };
   let uiStateMachine = new UiStateMachine(states, 'start')
-  uiStateMachine.on('SUCCESS');
+  uiStateMachine.emit('SUCCESS');
   expect(uiStateMachine.getPayload()).toBe('success')
 });
 
@@ -99,7 +99,7 @@ test('onStateChange', done => {
   };
   let uiStateMachine = new UiStateMachine(states, 'start');
   uiStateMachine.onStateChange(() => done())
-  uiStateMachine.on('SUCCESS');
+  uiStateMachine.emit('SUCCESS');
 });
 
 
@@ -117,7 +117,7 @@ test('prevState', () => {
     }
   };
   let uiStateMachine = new UiStateMachine(states, 'start');
-  uiStateMachine.on('SUCCESS');
+  uiStateMachine.emit('SUCCESS');
   uiStateMachine.goToPrevState();
   expect(uiStateMachine.getState()).toBe('start');
 });

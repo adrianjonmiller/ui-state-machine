@@ -12,7 +12,7 @@ export default class UxStateMachine {
       }
 
       this.methods = {
-        on: this.on.bind(this),
+        emit: this.emit.bind(this),
         onStateChange: this.onStateChange.bind(this),
         getState: this.getState.bind(this),
         getPrevState: this.getPrevState.bind(this),
@@ -100,6 +100,6 @@ export default class UxStateMachine {
   }
 }
 
-if (window && !('UxStateMachine' in window) {
+if (window && !('UxStateMachine' in window)) {
     window.UxStateMachine = UxStateMachine;
 }
