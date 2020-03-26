@@ -117,8 +117,8 @@ const states = {
 	},
 	complete: {
 		enter: () => {
-      		errorNode.innerHTML = 'Success';
-      		input.value = '';
+      			errorNode.innerHTML = 'Success';
+      			input.value = '';
 			form.removeEventListener('submit', submitHandler)
 		}
 	}
