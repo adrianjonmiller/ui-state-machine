@@ -6,6 +6,7 @@ export default class UxStateMachine {
       this.payload = null
       this.events = [];
       this.cb = null;
+      this.guard = null;
 
       if (currentState) {
           this.updateState(currentState)
@@ -18,6 +19,7 @@ export default class UxStateMachine {
         getPrevState: this.getPrevState.bind(this),
         getPayload: this.getPayload.bind(this),
         goToPrevState: this.goToPrevState.bind(this),
+        beforeEach: this.beforeEach.bind(this)
     }
 
       return this.methods;
@@ -29,10 +31,18 @@ export default class UxStateMachine {
           let next = this.states[this.currentState].on[event];
           
           if (next) {
-              if (next !== this.currentState) {
-                  this.updateState(next);
-                  this.events.push(event);
-              }
+                if (next !== this.currentState) {
+                    if (this.guard) {
+                        this.guard.call({}, next, this.currentState, redirect => {
+                            next = redirect && redirect in this.states ? redirect : next
+                            this.updateState(next);
+                            this.events.push(event);
+                        })
+                    } else {
+                        this.updateState(next);
+                        this.events.push(event);
+                    }
+                }
           }  else {
               throw `${event} does not exist in ${this.currentState}`
           }
@@ -45,7 +55,7 @@ export default class UxStateMachine {
     let prevState = this.prevStates.length ? this.prevStates.pop() : null;
 
     if (prevState) {
-        this.updateState(prevState)
+        this.updateState(prevState, false)
     }
   }
 
@@ -65,7 +75,11 @@ export default class UxStateMachine {
       return this.prevStates.length > 0 ? this.prevStates[this.prevStates.length - 1] : null;
   }
 
-  updateState (state) {
+  beforeEach (cb) {
+    this.guard = cb
+  }
+
+  updateState (state, forward = true) {
       let payload = this.states[state].payload;
 
       if (this.currentState) {
@@ -77,7 +91,9 @@ export default class UxStateMachine {
               }
           }
 
-          this.prevStates.push(this.currentState);
+          if (forward) {
+            this.prevStates.push(this.currentState);
+          }
       }
 
       this.currentState = state;

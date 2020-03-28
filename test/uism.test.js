@@ -109,3 +109,24 @@ test('prevState', () => {
   uiStateMachine.goToPrevState();
   expect(uiStateMachine.getState()).toBe('start');
 });
+
+test('stateGuard', () => {
+  let states = {
+    'start': {
+      on: {
+        'SUCCESS': 'nextState'
+      },
+    },
+    'nextState': {
+      payload: 'success'
+    }
+  };
+  let uiStateMachine = new UiStateMachine(states, 'start');
+  uiStateMachine.beforeEach((to, from, next) => {
+    if (to === 'nextState' && from === 'start') {
+      next()
+    }
+  });
+  uiStateMachine.emit('SUCCESS');
+  expect(uiStateMachine.getState()).toBe('nextState');
+});
