@@ -47,7 +47,7 @@ uxStateMachine.emit('EVENT');
 
 ### Enter and leave methods
 
-Enter and leave methods trigger when move between states. The leave method triggers on leaving the state but before the State Change Callback would be triggered and the enter of the next function triggers immediately before the state change callback triggers.
+Enter and leave methods trigger when move between states. The leave method triggers immediately on leaving the current state and the enter method triggers immedately on entering the next state. But occur before the State Change Callback is called.
 
 ```javascript
 const states = {
@@ -66,7 +66,9 @@ uxStateMachine.emit('EVENT');
 
 ### Code examples
 
-In this example, upon entering the error state, it sets the errorNode content to an error message. On leaving the error state the errorNode content is cleared. [Working Codepen Example](https://codepen.io/adrianjonmiller/details/YzXRBKo)
+In this example you can see the UxStateMachine in use. On entering the 'enter' function is called on the 'start' state. The attaches a listener to the form and listens for a submit event. On submitting the form it check if the input contains a valid email. If the input does contain a valid email it proceeds to the loading state. If the loading state is successful it emits 'SUCCESS' in then passes on to the complete state, and the complete state removes the event listener from the form. If at any point an error occurs it moves to the 'error' state which passes an error message to the errorNode and stays in that state until the error is resolve.
+
+ [Working Codepen Example](https://codepen.io/adrianjonmiller/details/YzXRBKo)
 
 ```html
 <form id="form">
@@ -85,7 +87,7 @@ const states = {
 	'start': {
 		on: {
 			'ERROR': 'error',
-			'SUBMIT': 'submit'
+			'SUBMIT': 'loading'
 		},
 		enter: () => {
 			form.addEventListener('submit', submitHandler)
@@ -93,7 +95,7 @@ const states = {
 	},
 	'error': {
 		on: {
-			'SUBMIT': 'submit',
+			'SUBMIT': 'loading',
 			'ERROR': 'error',
 		},
 		enter: () => {		
@@ -103,7 +105,7 @@ const states = {
 			errorNode.innerHTML = ''
 		},
 	},
-	submit: {
+	loading: {
 		on: {
 			'SUCCESS': 'complete',
 			'ERROR': 'error'
