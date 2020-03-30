@@ -1,6 +1,5 @@
 import UiStateMachine from '../src';
 
-
 test('getCurrentState', () => {
   let states = {
     'start': {}
@@ -20,8 +19,11 @@ test('getNextState', () => {
     },
     'nextState': {}
   };
-  let uiStateMachine = new UiStateMachine(states, 'start')
+
+  let uiStateMachine = new UiStateMachine(states, 'start');
+
   uiStateMachine.emit('SUCCESS');
+
   expect(uiStateMachine.getState()).toBe('nextState');
 });
 
@@ -37,7 +39,9 @@ test('leavingState', done => {
     },
     'nextState': {}
   };
-  let uiStateMachine = new UiStateMachine(states, 'start')
+
+  let uiStateMachine = new UiStateMachine(states, 'start');
+
   uiStateMachine.emit('SUCCESS');
 });
 
@@ -55,7 +59,8 @@ test('enteringState', done => {
       }
     }
   };
-  let uiStateMachine = new UiStateMachine(states, 'start')
+  let uiStateMachine = new UiStateMachine(states, 'start');
+
   uiStateMachine.emit('SUCCESS');
 });
 
@@ -71,9 +76,12 @@ test('getData', () => {
       data: 'success'
     }
   };
-  let uiStateMachine = new UiStateMachine(states, 'start')
+
+  let uiStateMachine = new UiStateMachine(states, 'start');
+
   uiStateMachine.emit('SUCCESS');
-  expect(uiStateMachine.getData()).toBe('success')
+
+  expect(uiStateMachine.getData()).toBe('success');
 });
 
 test('onStateChange', done => {
@@ -87,8 +95,11 @@ test('onStateChange', done => {
       data: 'success'
     }
   };
+
   let uiStateMachine = new UiStateMachine(states, 'start');
-  uiStateMachine.onStateChange(() => done())
+
+  uiStateMachine.onStateChange(() => done());
+
   uiStateMachine.emit('SUCCESS');
 });
 
@@ -104,9 +115,13 @@ test('prevState', () => {
       data: 'success'
     }
   };
+
   let uiStateMachine = new UiStateMachine(states, 'start');
+
   uiStateMachine.emit('SUCCESS');
+
   uiStateMachine.goToPrevState();
+
   expect(uiStateMachine.getState()).toBe('start');
 });
 
@@ -121,12 +136,16 @@ test('stateGuard', () => {
       data: 'success'
     }
   };
+
   let uiStateMachine = new UiStateMachine(states, 'start');
+
   uiStateMachine.beforeEach((to, from, next) => {
     if (to === 'nextState' && from === 'start') {
       next()
     }
   });
+
   uiStateMachine.emit('SUCCESS');
+
   expect(uiStateMachine.getState()).toBe('nextState');
 });
