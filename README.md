@@ -21,7 +21,7 @@ uxStateMachine.getState(); // 'next_state'
 
 ### State change callback
 
-The State Change Callback is triggered when ever a state is changed. It passed three arguments 'newState', 'oldState', and the 'payload'.
+The State Change Callback is triggered when ever a state is changed. It passed three arguments object containing {data, payload}, then 'newState', and 'oldState'.
 
 ```javascript
 const states = {
@@ -29,20 +29,21 @@ const states = {
 		on: {'EVENT': 'next_state'}
 	},
 	'next_state': {
-		payload: {first_name: 'Bob'}
+		data: {data: 'data'}
 	}
 };
 
 let uxStateMachine = new UxStateMachine(states, 'start');
 
-let stateChangeCallback = (newState, oldState, payload) => {
+let stateChangeCallback = ({data, payload}, newState, oldState) => {
 	console.log(newState); // new_state
 	console.log(oldState); // start
-	console.log(payload);  // {first_name: 'Bob'} 
+	console.log(payload);  //  {payload: 'payload'}  
+	console.log(data);  // {data: 'data'}
 }
-
+let payload = {payload: 'payload'};
 uxStateMachine.onStateChange(stateChangeCallback);
-uxStateMachine.emit('EVENT');
+uxStateMachine.emit('EVENT', payload);
 ```
 
 ### Enter and leave methods
