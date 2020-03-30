@@ -35,7 +35,7 @@ const states = {
 
 let uxStateMachine = new UxStateMachine(states, 'start');
 
-let stateChangeCallback = ({data, payload}, newState, oldState) => {
+let stateChangeCallback = (data, newState, oldState, payload) => {
 	console.log(newState); // new_state
 	console.log(oldState); // start
 	console.log(payload);  //  {payload: 'payload'}  
