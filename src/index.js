@@ -1,126 +1,126 @@
 export default class UxStateMachine {
-  constructor (states, currentState = null, cb = null) {
-      this.states = states;
-      this.currentState = currentState;
-      this.prevStates = [];
-      this.data = null
-      this.events = [];
-      this.cb = cb;
-      this.guard = null;
+  constructor(states, currentState = null, cb = null) {
+    this.states = states;
+    this.currentState = currentState;
+    this.prevStates = [];
+    this.data = null
+    this.events = [];
+    this.cb = cb;
+    this.beforeGuard = null;
 
-      if (currentState) {
-          this.updateState(currentState)
-      }
-
-      this.methods = {
-        emit: this.emit.bind(this),
-        onStateChange: this.onStateChange.bind(this),
-        getState: this.getState.bind(this),
-        getPrevState: this.getPrevState.bind(this),
-        getData: this.getData.bind(this),
-        goToPrevState: this.goToPrevState.bind(this),
-        beforeEach: this.beforeEach.bind(this)
+    if (currentState) {
+      this.updateState(currentState)
     }
 
-      return this.methods;
+    this.methods = {
+      emit: this.emit.bind(this),
+      onStateChange: this.onStateChange.bind(this),
+      getState: this.getState.bind(this),
+      getPrevState: this.getPrevState.bind(this),
+      getData: this.getData.bind(this),
+      goToPrevState: this.goToPrevState.bind(this),
+      beforeEach: this.beforeEach.bind(this)
+    }
+
+    return this.methods;
   }
 
-  emit (event, payload = null) {
-      try {
-          
-          let next = this.states[this.currentState].on[event];
-          
-          if (next) {
-                if (next !== this.currentState) {
-                    if (this.guard) {
-                        this.guard.call({}, next, this.currentState, redirect => {
-                            next = redirect && redirect in this.states ? redirect : next
-                            this.updateState(next, payload);
-                            this.events.push(event);
-                        })
-                    } else {
-                        this.updateState(next, payload);
-                        this.events.push(event);
-                    }
-                }
-          }  else {
-              throw `${event} does not exist in ${this.currentState}`
+  emit(event, payload = null) {
+    try {
+
+      let next = this.states[this.currentState].on[event];
+
+      if (next) {
+        if (next !== this.currentState) {
+          if (this.beforeGuard) {
+            this.beforeGuard.call({}, next, this.currentState, redirect => {
+              next = redirect && redirect in this.states ? redirect : next
+              this.updateState(next, payload);
+              this.events.push(event);
+            })
+          } else {
+            this.updateState(next, payload);
+            this.events.push(event);
           }
-      } catch (err) {
-          console.error(err)
+        }
+      } else {
+        throw `${event} does not exist in ${this.currentState}`
       }
+    } catch (err) {
+      console.error(err)
+    }
   }
 
-  goToPrevState (payload) {
+  goToPrevState(payload) {
     let prevState = this.prevStates.length ? this.prevStates.pop() : null;
 
-    if (this.guard) {
-        this.guard.call({}, prevState, this.currentState, redirect => {
-            prevState = redirect && redirect in this.states ? redirect : prevState
-            this.updateState(prevState);
-        })
+    if (this.beforeGuard) {
+      this.beforeGuard.call({}, prevState, this.currentState, redirect => {
+        prevState = redirect && redirect in this.states ? redirect : prevState
+        this.updateState(prevState);
+      })
     } else {
-        this.updateState(prevState, payload, false);
+      this.updateState(prevState, payload, false);
     }
   }
 
-  onStateChange (cb) {
-      this.cb = cb
+  onStateChange(cb) {
+    this.cb = cb
   }
 
-  getState () {
-      return this.currentState
+  getState() {
+    return this.currentState
   }
 
-  getData () {
-      return this.data
+  getData() {
+    return this.data
   }
 
-  getPrevState () {
-      return this.prevStates.length > 0 ? this.prevStates[this.prevStates.length - 1] : null;
+  getPrevState() {
+    return this.prevStates.length > 0 ? this.prevStates[this.prevStates.length - 1] : null;
   }
 
-  beforeEach (cb) {
-    this.guard = cb
+  beforeEach(cb) {
+    this.beforeGuard = cb
   }
 
-  updateState (state, payload, forward = true) {
-      let data = 'data' in  this.states[state] ? this.states[state].data : null;
+  updateState(state, payload, forward = true) {
+    let data = 'data' in this.states[state] ? this.states[state].data : null;
 
-      if (this.currentState) {
-          let currentStateOb = this.states[this.currentState];
+    if (this.currentState) {
+      let currentStateOb = this.states[this.currentState];
 
-          if ('leave' in currentStateOb) {
-              if (typeof currentStateOb.leave === 'function') {
-                  currentStateOb.leave.call({}, this.methods, payload)
-              }
-          }
-
-          if (forward) {
-            this.prevStates.push(this.currentState);
-          }
+      if ('leave' in currentStateOb) {
+        if (typeof currentStateOb.leave === 'function') {
+          currentStateOb.leave.call({}, this.methods, payload)
+        }
       }
 
-      this.currentState = state;
-
-      if (data) {
-          this.data = data
+      if (forward) {
+        this.prevStates.push(this.currentState);
       }
+    }
 
-      let newStateOb = this.states[this.currentState];
+    this.currentState = state;
 
-      if ('enter' in newStateOb) {
-          if (typeof newStateOb.enter === 'function') {
-              newStateOb.enter.call({}, this.methods, payload)
-          }
+    if (data) {
+      this.data = data
+    }
+
+    let newStateOb = this.states[this.currentState];
+
+    if ('enter' in newStateOb) {
+      if (typeof newStateOb.enter === 'function') {
+        newStateOb.enter.call({}, this.methods, payload)
       }
+    }
 
-      if (typeof this.cb === 'function') {
-          this.cb.call({}, {data, payload}, this.currentState, this.prevStates);
-      }
+    if (typeof this.cb === 'function') {
+      this.cb.call({}, { data, payload }, this.currentState, this.prevStates);
+    }
   }
 }
 
 if (window && !('UxStateMachine' in window)) {
-    window.UxStateMachine = UxStateMachine;
+  window.UxStateMachine = UxStateMachine;
 }
