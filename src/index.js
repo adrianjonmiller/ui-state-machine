@@ -116,7 +116,7 @@ export default class UxStateMachine {
     }
 
     if (typeof this.cb === 'function') {
-      this.cb.call({}, { data, payload }, this.currentState, this.prevStates);
+      this.cb.call({}, data, this.currentState, this.prevStates, payload);
     }
   }
 }

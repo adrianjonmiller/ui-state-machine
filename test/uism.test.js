@@ -64,6 +64,27 @@ test('enteringState', done => {
   uiStateMachine.emit('SUCCESS');
 });
 
+test('receivePayload', done => {
+  let states = {
+    'start': {
+      on: {
+        'SUCCESS': 'nextState'
+      }
+    },
+    'nextState': {}
+  };
+
+  let uiStateMachine = new UiStateMachine(states, 'start');
+
+  uiStateMachine.onStateChange((_, _, _, payload) => {
+    if (payload.name === 'test') {
+      done()
+    }
+  })
+
+  uiStateMachine.emit('SUCCESS', {name: 'test'});
+});
+
 
 test('getData', () => {
   let states = {
