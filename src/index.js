@@ -1,11 +1,11 @@
 export default class UxStateMachine {
-  constructor (states, currentState = null) {
+  constructor (states, currentState = null, cb = null) {
       this.states = states;
       this.currentState = currentState;
       this.prevStates = [];
       this.data = null
       this.events = [];
-      this.cb = null;
+      this.cb = cb;
       this.guard = null;
 
       if (currentState) {
