@@ -3,7 +3,7 @@ export default class UxStateMachine {
       this.states = states;
       this.currentState = currentState;
       this.prevStates = [];
-      this.payload = null
+      this.data = null
       this.events = [];
       this.cb = null;
       this.guard = null;
@@ -17,7 +17,7 @@ export default class UxStateMachine {
         onStateChange: this.onStateChange.bind(this),
         getState: this.getState.bind(this),
         getPrevState: this.getPrevState.bind(this),
-        getPayload: this.getPayload.bind(this),
+        getData: this.getData.bind(this),
         goToPrevState: this.goToPrevState.bind(this),
         beforeEach: this.beforeEach.bind(this)
     }
@@ -25,7 +25,7 @@ export default class UxStateMachine {
       return this.methods;
   }
 
-  emit (event) {
+  emit (event, payload = null) {
       try {
           
           let next = this.states[this.currentState].on[event];
@@ -35,11 +35,11 @@ export default class UxStateMachine {
                     if (this.guard) {
                         this.guard.call({}, next, this.currentState, redirect => {
                             next = redirect && redirect in this.states ? redirect : next
-                            this.updateState(next);
+                            this.updateState(next, payload);
                             this.events.push(event);
                         })
                     } else {
-                        this.updateState(next);
+                        this.updateState(next, payload);
                         this.events.push(event);
                     }
                 }
@@ -51,11 +51,16 @@ export default class UxStateMachine {
       }
   }
 
-  goToPrevState () {
+  goToPrevState (payload) {
     let prevState = this.prevStates.length ? this.prevStates.pop() : null;
 
-    if (prevState) {
-        this.updateState(prevState, false)
+    if (this.guard) {
+        this.guard.call({}, prevState, this.currentState, redirect => {
+            prevState = redirect && redirect in this.states ? redirect : prevState
+            this.updateState(prevState);
+        })
+    } else {
+        this.updateState(prevState, payload, false);
     }
   }
 
@@ -67,8 +72,8 @@ export default class UxStateMachine {
       return this.currentState
   }
 
-  getPayload () {
-      return this.payload
+  getData () {
+      return this.data
   }
 
   getPrevState () {
@@ -79,15 +84,15 @@ export default class UxStateMachine {
     this.guard = cb
   }
 
-  updateState (state, forward = true) {
-      let payload = this.states[state].payload;
+  updateState (state, payload, forward = true) {
+      let data = 'data' in  this.states[state] ? this.states[state].data : null;
 
       if (this.currentState) {
           let currentStateOb = this.states[this.currentState];
 
           if ('leave' in currentStateOb) {
               if (typeof currentStateOb.leave === 'function') {
-                  currentStateOb.leave.call({}, this.methods)
+                  currentStateOb.leave.call({}, this.methods, payload)
               }
           }
 
@@ -98,20 +103,20 @@ export default class UxStateMachine {
 
       this.currentState = state;
 
-      if (payload) {
-          this.payload = payload
+      if (data) {
+          this.data = data
       }
 
       let newStateOb = this.states[this.currentState];
 
       if ('enter' in newStateOb) {
           if (typeof newStateOb.enter === 'function') {
-              newStateOb.enter.call({}, this.methods)
+              newStateOb.enter.call({}, this.methods, payload)
           }
       }
 
       if (typeof this.cb === 'function') {
-          this.cb(this.currentState, this.prevStates, payload);
+          this.cb.call({}, {data, payload}, this.currentState, this.prevStates);
       }
   }
 }

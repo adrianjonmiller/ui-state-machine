@@ -60,7 +60,7 @@ test('enteringState', done => {
 });
 
 
-test('getPayload', () => {
+test('getData', () => {
   let states = {
     'start': {
       on: {
@@ -68,12 +68,12 @@ test('getPayload', () => {
       },
     },
     'nextState': {
-      payload: 'success'
+      data: 'success'
     }
   };
   let uiStateMachine = new UiStateMachine(states, 'start')
   uiStateMachine.emit('SUCCESS');
-  expect(uiStateMachine.getPayload()).toBe('success')
+  expect(uiStateMachine.getData()).toBe('success')
 });
 
 test('onStateChange', done => {
@@ -84,7 +84,7 @@ test('onStateChange', done => {
       },
     },
     'nextState': {
-      payload: 'success'
+      data: 'success'
     }
   };
   let uiStateMachine = new UiStateMachine(states, 'start');
@@ -101,7 +101,7 @@ test('prevState', () => {
       },
     },
     'nextState': {
-      payload: 'success'
+      data: 'success'
     }
   };
   let uiStateMachine = new UiStateMachine(states, 'start');
@@ -118,7 +118,7 @@ test('stateGuard', () => {
       },
     },
     'nextState': {
-      payload: 'success'
+      data: 'success'
     }
   };
   let uiStateMachine = new UiStateMachine(states, 'start');
