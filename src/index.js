@@ -57,7 +57,7 @@ export default class UxStateMachine {
     if (this.beforeGuard) {
       this.beforeGuard.call({}, prevState, this.currentState, redirect => {
         prevState = redirect && redirect in this.states ? redirect : prevState
-        this.updateState(prevState);
+        this.updateState(prevState, payload, false);
       })
     } else {
       this.updateState(prevState, payload, false);
