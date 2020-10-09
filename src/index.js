@@ -3,7 +3,7 @@ export default class UxStateMachine {
     this.states = states;
     this.currentState = currentState;
     this.prevStates = [];
-    this.data = null
+    this.data = null;
     this.events = [];
     this.cb = cb;
     this.beforeGuard = null;
@@ -19,10 +19,16 @@ export default class UxStateMachine {
       getPrevState: this.getPrevState.bind(this),
       getData: this.getData.bind(this),
       goToPrevState: this.goToPrevState.bind(this),
-      beforeEach: this.beforeEach.bind(this)
+      beforeEach: this.beforeEach.bind(this),
+      getEvents: this.getEvents.bind(this)
     }
 
     return this.methods;
+  }
+
+  getEvents () {
+    let on = this.currentState in this.states && 'on' in this.states[this.currentState] ? this.states[this.currentState].on : null;
+    return on ? Object.keys(on) : [];
   }
 
   emit(event, payload = null) {

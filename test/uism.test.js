@@ -27,6 +27,23 @@ test('getNextState', () => {
   expect(uiStateMachine.getState()).toBe('nextState');
 });
 
+
+test('getEvents', () => {
+  let states = {
+    'start': {
+      on: {
+        'SUCCESS': 'nextState'
+      }
+    },
+    'nextState': {}
+  };
+
+  let uiStateMachine = new UiStateMachine(states, 'start');
+  let events = uiStateMachine.getEvents();
+
+  expect(events[0]).toBe('SUCCESS');
+});
+
 test('leavingState', done => {
   let states = {
     'start': {
@@ -76,7 +93,7 @@ test('receivePayload', done => {
 
   let uiStateMachine = new UiStateMachine(states, 'start');
 
-  uiStateMachine.onStateChange((_, _, _, payload) => {
+  uiStateMachine.onStateChange((_, __, ____, payload) => {
     if (payload.name === 'test') {
       done()
     }
