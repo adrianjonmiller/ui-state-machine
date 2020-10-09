@@ -1,6 +1,6 @@
 {
   "name": "ux-state-machine",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Manage Ui state more efficiently",
   "main": "dist/index.js",
   "author": "A. Miller",
