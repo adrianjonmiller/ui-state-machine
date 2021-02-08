@@ -126,7 +126,3 @@ export default class UxStateMachine {
     }
   }
 }
-
-if (window && !('UxStateMachine' in window)) {
-  window.UxStateMachine = UxStateMachine;
-}
