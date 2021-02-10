@@ -36,7 +36,7 @@ export default class UxStateMachine {
       this.updateState(this.currentState)
       return this.methods;
     } else {
-      console.warn('No state defined')
+      console.warn('Cannot initialize; no state defined')
     }
   }
 
