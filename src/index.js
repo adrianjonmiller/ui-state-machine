@@ -7,28 +7,37 @@ export default class UxStateMachine {
     this.events = [];
     this.cb = cb;
     this.beforeGuard = null;
-
-    if (currentState) {
-      this.updateState(currentState)
-    }
+    this.initialized = false;
 
     this.methods = {
-      emit: this.emit.bind(this),
+      emit: (...args) => this.check(args, this.emit),
       onStateChange: this.onStateChange.bind(this),
-      getState: this.getState.bind(this),
-      getPrevState: this.getPrevState.bind(this),
-      getData: this.getData.bind(this),
-      goToPrevState: this.goToPrevState.bind(this),
+      getState: (...args) => this.check(args, this.getState),
+      getPrevState: (...args) => this.check(args, this.getPrevState),
+      getData: (...args) => this.check(args, this.getData),
+      goToPrevState: (...args) => this.check(args, this.goToPrevState),
       beforeEach: this.beforeEach.bind(this),
-      getEvents: this.getEvents.bind(this)
+      getEvents: (...args) => this.check(args, this.getEvents),
     }
 
-    return this.methods;
+    return {...this.methods, init: this.init.bind(this)};
   }
 
   getEvents () {
     let on = this.currentState in this.states && 'on' in this.states[this.currentState] ? this.states[this.currentState].on : null;
     return on ? Object.keys(on) : [];
+  }
+
+  init (newState) {
+    this.currentState = newState || this.currentState;
+
+    if (this.currentState) {
+      this.initialized = true;
+      this.updateState(this.currentState)
+      return this.methods;
+    } else {
+      console.warn('No state defined')
+    }
   }
 
   emit(event, payload = null) {
@@ -124,5 +133,25 @@ export default class UxStateMachine {
     if (typeof this.cb === 'function') {
       this.cb.call({}, data, this.currentState, this.prevStates, payload);
     }
+  }
+
+  check (args, cb) {
+    try {
+      if (!this.initialized) {
+        throw 'State machine is not initialized'
+      }
+      
+      if (!this.currentState) {
+        throw 'State is not set'
+      }
+
+      if (!(this.currentState in this.states)) {
+        throw 'State does not exist in states'
+      }
+
+      return cb.apply(this, args);
+    } catch (err) {
+      console.error(err)
+    }    
   }
 }

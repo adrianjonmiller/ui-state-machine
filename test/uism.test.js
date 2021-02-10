@@ -5,7 +5,7 @@ test('getCurrentState', () => {
     'start': {}
   }
 
-  let uiStateMachine = new UiStateMachine(states, 'start')
+  let uiStateMachine = new UiStateMachine(states, 'start').init();
   expect(uiStateMachine.getState()).toBe('start');
 });
 
@@ -20,7 +20,7 @@ test('getNextState', () => {
     'nextState': {}
   };
 
-  let uiStateMachine = new UiStateMachine(states, 'start');
+  let uiStateMachine = new UiStateMachine(states, 'start').init();
 
   uiStateMachine.emit('SUCCESS');
 
@@ -38,7 +38,7 @@ test('getEvents', () => {
     'nextState': {}
   };
 
-  let uiStateMachine = new UiStateMachine(states, 'start');
+  let uiStateMachine = new UiStateMachine(states, 'start').init();
   let events = uiStateMachine.getEvents();
 
   expect(events[0]).toBe('SUCCESS');
@@ -57,7 +57,7 @@ test('leavingState', done => {
     'nextState': {}
   };
 
-  let uiStateMachine = new UiStateMachine(states, 'start');
+  let uiStateMachine = new UiStateMachine(states, 'start').init();
 
   uiStateMachine.emit('SUCCESS');
 });
@@ -76,7 +76,7 @@ test('enteringState', done => {
       }
     }
   };
-  let uiStateMachine = new UiStateMachine(states, 'start');
+  let uiStateMachine = new UiStateMachine(states, 'start').init();
 
   uiStateMachine.emit('SUCCESS');
 });
@@ -91,7 +91,7 @@ test('receivePayload', done => {
     'nextState': {}
   };
 
-  let uiStateMachine = new UiStateMachine(states, 'start');
+  let uiStateMachine = new UiStateMachine(states, 'start').init();
 
   uiStateMachine.onStateChange((_, __, ____, payload) => {
     if (payload.name === 'test') {
@@ -115,7 +115,7 @@ test('getData', () => {
     }
   };
 
-  let uiStateMachine = new UiStateMachine(states, 'start');
+  let uiStateMachine = new UiStateMachine(states, 'start').init();
 
   uiStateMachine.emit('SUCCESS');
 
@@ -134,7 +134,7 @@ test('onStateChange', done => {
     }
   };
 
-  let uiStateMachine = new UiStateMachine(states, 'start');
+  let uiStateMachine = new UiStateMachine(states, 'start').init();
 
   uiStateMachine.onStateChange(() => done());
 
@@ -154,7 +154,7 @@ test('prevState', () => {
     }
   };
 
-  let uiStateMachine = new UiStateMachine(states, 'start');
+  let uiStateMachine = new UiStateMachine(states, 'start').init();
 
   uiStateMachine.emit('SUCCESS');
 
@@ -175,7 +175,7 @@ test('stateGuard', () => {
     }
   };
 
-  let uiStateMachine = new UiStateMachine(states, 'start');
+  let uiStateMachine = new UiStateMachine(states, 'start').init();
 
   uiStateMachine.beforeEach((to, from, next) => {
     if (to === 'nextState' && from === 'start') {
@@ -185,5 +185,5 @@ test('stateGuard', () => {
 
   uiStateMachine.emit('SUCCESS');
 
-  expect(uiStateMachine.getState()).toBe('nextState');
+  expect(uiStateMachine.getState()).toBe('nextState')
 });
