@@ -18,7 +18,7 @@ export default class UxStateMachine {
       goToPrevState: (...args) => this.check(args, this.goToPrevState),
       beforeEach: this.beforeEach.bind(this),
       getEvents: (...args) => this.check(args, this.getEvents),
-      jumpTo: (...args) => this.check(args, this.updateState)
+      setState: (...args) => this.check(args, this.updateState)
     }
 
     return {...this.methods, init: this.init.bind(this)};
@@ -39,6 +39,7 @@ export default class UxStateMachine {
     } else {
       console.warn('Cannot initialize; no state defined')
     }
+    return this.methods
   }
 
   emit(event, payload = null) {
@@ -65,6 +66,7 @@ export default class UxStateMachine {
     } catch (err) {
       console.error(err)
     }
+    return this.methods
   }
 
   goToPrevState(payload) {
@@ -78,10 +80,12 @@ export default class UxStateMachine {
     } else {
       this.updateState(prevState, payload, false);
     }
+    return this.methods
   }
 
   onStateChange(cb) {
     this.cb = cb
+    return this.methods
   }
 
   getState() {
@@ -97,7 +101,8 @@ export default class UxStateMachine {
   }
 
   beforeEach(cb) {
-    this.beforeGuard = cb
+    this.beforeGuard = cb;
+    return this.methods
   }
 
   updateState(state, payload, forward = true) {
