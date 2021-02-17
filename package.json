@@ -15,7 +15,8 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "babel src/index.js --out-file dist/index.js"
+    "build": "babel src/index.js --out-file dist/index.js",
+    "publish:patch": "yarn build && npm version patch && npm publish"
   },
   "dependencies": {}
 }
