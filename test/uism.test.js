@@ -187,3 +187,14 @@ test('stateGuard', () => {
 
   expect(uiStateMachine.getState()).toBe('nextState')
 });
+
+
+test('Jump to state', () => {
+  let states = {
+    'start': {},
+    "next": {}
+  }
+
+  let uiStateMachine = new UiStateMachine(states, 'start').init();
+  expect(uiStateMachine.jumpTo('next').getState()).toBe('next');
+});

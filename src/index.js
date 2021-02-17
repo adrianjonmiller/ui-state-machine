@@ -18,6 +18,7 @@ export default class UxStateMachine {
       goToPrevState: (...args) => this.check(args, this.goToPrevState),
       beforeEach: this.beforeEach.bind(this),
       getEvents: (...args) => this.check(args, this.getEvents),
+      jumpTo: (...args) => this.check(args, this.updateState)
     }
 
     return {...this.methods, init: this.init.bind(this)};
@@ -133,6 +134,8 @@ export default class UxStateMachine {
     if (typeof this.cb === 'function') {
       this.cb.call({}, data, this.currentState, this.prevStates, payload);
     }
+
+    return this.methods
   }
 
   check (args, cb) {
